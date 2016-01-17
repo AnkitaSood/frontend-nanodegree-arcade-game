@@ -23,7 +23,8 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime
+        gameOver = false;
 
     canvas.width = 1010;
     canvas.height = 606;
@@ -64,7 +65,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        //reset();
         lastTime = Date.now();
         main();
     }
@@ -80,7 +81,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -94,7 +95,19 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        //player.update();
+    }
+
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if(player.x < enemy.x + 101 
+                && player.x + 101 > enemy.x 
+                && player.y < enemy.y+ 80 
+                && player.y + 80 > enemy.y) {
+                this.gameOver = true;
+                player.setPosition();
+            }
+        });
     }
 
     /* This function initially draws the "game level", it will then call
@@ -132,11 +145,16 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 82);
             }
         }
 
         renderEntities();
+        if (this.gameOver) {
+                    ctx.textAlign = 'center';
+                    ctx.font = 'bold 84px Arial';
+                    ctx.fillText("Game Over", 480, 300);
+                };
     }
 
     /* This function is called by the render function and is called on each game
@@ -148,7 +166,7 @@ var Engine = (function(global) {
          * the render function you have defined.
          */
         allEnemies.forEach(function(enemy) {
-            //enemy.render(200,400);
+            enemy.render();
         });
 
         player.render();
@@ -158,9 +176,9 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
-    function reset() {
+    /*function reset() {
         // noop
-    }
+    }*/
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
