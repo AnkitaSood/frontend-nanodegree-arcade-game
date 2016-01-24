@@ -16,7 +16,7 @@ Enemy.prototype.constructor = Enemy;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
+Enemy.prototype.update = function(dt) { 
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.    
@@ -35,7 +35,13 @@ Enemy.prototype.setPosition = function(){
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/char-princess-girl.png';
+    this.playerSprites = [  'images/char-princess-girl.png',
+                            'images/char-boy.png',
+                            'images/char-cat-girl.png',
+                            'images/char-horn-girl.png',
+                            'images/char-pink-girl.png'];
+    this.sprite = this.playerSprites[0];
+    this.currentIndex = 0;
     this.setPosition();
 }
 
@@ -43,10 +49,11 @@ Player.prototype = Object.create(GameObjects.prototype);
 Player.prototype.constructor = Player;
 Player.prototype.setPosition = function() {
     //intial position coordinates for the player
-    this.x = 480, this.y = 400; 
+    this.x = 440, this.y = 400; 
 }
 Player.prototype.handleInput = function(e){
-    /*ensure the player stays inside the canvas*/
+    /*ensure the player stays inside the canvas when the user navigates the player,
+    and change player image when user hits spacebar on initial game load*/
     switch(e) {
         case "left" : this.x -= 12;
         break;
@@ -59,7 +66,22 @@ Player.prototype.handleInput = function(e){
         case "down" :  {
             this.y < 434 ? this.y += 12 : this.y = 434;
         }
+        break;
+        case "space" : {
+            if (this.currentIndex < this.playerSprites.length) {
+                this.currentIndex++;
+            }
+            if (this.currentIndex == this.playerSprites.length){
+                this.currentIndex = 0;
+            }
+            
+        }
+        break;
+        case "enter" : {
+            playerChosen = true;
+        }
     }
+    this.sprite = this.playerSprites[this.currentIndex];
 }
 
 // Now instantiate your objects.
@@ -72,15 +94,15 @@ var allEnemies = new Array(2),
     allEnemies[0] = new Enemy();
     allEnemies[1] = new Enemy();
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// This listens for key presses and sends the keys to handleInput() method.
 document.addEventListener('keydown', function(e) {
     var allowedKeys = {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        32: 'space',
+        13: 'enter'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
