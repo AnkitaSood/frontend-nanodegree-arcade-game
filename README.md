@@ -1,4 +1,4 @@
 frontend-nanodegree-arcade-game
 ===============================
 
-Use the arrow keys to navigate the player and try to make it reach the water. Avoid the bugs while crossing the stone path.
+Select the player image using spacebar. Hit enter to start game. Use the arrow keys to navigate the player and try to collect as many gems as possible. Avoid the bug while navigating. For every 10 points, a new bug creeps in the game.
