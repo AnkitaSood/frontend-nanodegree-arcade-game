@@ -1,9 +1,35 @@
 
 var GameObjects = function() {
-}
+};
 //required method to draw the enemies and player on the screen
 GameObjects.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+GameObjects.prototype.randomRange = function (upper,lower) {
+    return Math.floor(Math.random() * ((upper-lower)+1) + lower);
+}
+//Gemstones the Player needs to collect
+var Gems = function() {
+    this.spriteGems = ['images/gem-blue.png',
+                        'images/gem-green.png',
+                        'images/gem-orange.png'];
+    /*Select random gemstone to generate everytime*/                    
+    this.sprite = this.spriteGems[this.randomRange(2,0)];
+    this.setPosition();
+    this.gemCollected = false;
+};
+Gems.prototype = Object.create(GameObjects.prototype);
+Gems.prototype.constructor = Gems;
+Gems.prototype.setPosition = function() {
+    /*Position gemstones randomly anywhere within the canvas*/
+    this.x = this.randomRange(980,1);
+    this.y = this.randomRange(430,1);
+}
+Gems.prototype.collected = function() {
+    /*Remove the collected gem from canvas, increase score and push new enemy for every 10 points*/
+    ctx.clearRect(this.x, this.y, 1010, 606);
+    player.score ++;
+    player.score > 0 && player.score % 10 === 0 ? allEnemies.push(new Enemy()) : '';
 }
 
 // Enemies our player must avoid
@@ -25,10 +51,10 @@ Enemy.prototype.update = function(dt) {
 Enemy.prototype.setPosition = function(){
     //set different position coordinates for the enemy everytime the game starts or it crosses the canvas
     this.x = 1;
-    this.y = Math.floor(Math.random() * ((240-60)+1) + 60);
+    this.y = this.randomRange(240,60);
 
     //assign speed ranging between 50 to 300 to the enemies for variation everytime they cross the canvas
-    this.speed = Math.floor(Math.random()* ((300 -50)+1) +50);
+    this.speed = this.randomRange(300,50);
 };
 
 // Now write your own player class
@@ -43,6 +69,7 @@ var Player = function() {
     this.sprite = this.playerSprites[0];
     this.currentIndex = 0;
     this.setPosition();
+    this.score = 0;
 }
 
 Player.prototype = Object.create(GameObjects.prototype);
@@ -55,9 +82,9 @@ Player.prototype.handleInput = function(e){
     /*ensure the player stays inside the canvas when the user navigates the player,
     and change player image when user hits spacebar on initial game load*/
     switch(e) {
-        case "left" : this.x -= 12;
+        case "left" : this.x > 0 ? this.x-= 12 : this.x = 0;
         break;
-        case "right" : this.x += 12;
+        case "right" : this.x < 920? this.x += 12 : this.x = 920;
         break;
         case "up" : {
          this. y > 4 ? this.y -= 12 : this.y = 2;   
@@ -74,7 +101,6 @@ Player.prototype.handleInput = function(e){
             if (this.currentIndex == this.playerSprites.length){
                 this.currentIndex = 0;
             }
-            
         }
         break;
         case "enter" : {
@@ -87,12 +113,14 @@ Player.prototype.handleInput = function(e){
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = new Array(2), 
-    player = new Player();
+var allEnemies = [], 
+    player = new Player(),
+    gem = new Gems();
 
-    //Starting with 2 enemies. TODO: Increase number of enemies as per the level of difficulty chosen.
+    //Starting with 2 enemies.
     allEnemies[0] = new Enemy();
     allEnemies[1] = new Enemy();
+
 
 // This listens for key presses and sends the keys to handleInput() method.
 document.addEventListener('keydown', function(e) {

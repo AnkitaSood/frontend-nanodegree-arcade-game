@@ -25,7 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime
         gameOver = false,
-        playerChosen = false;
+        playerChosen = false,
+        score = 0;
 
     canvas.width = 1010;
     canvas.height = 606;
@@ -102,6 +103,16 @@ var Engine = (function(global) {
     }
 
     function checkCollisions() {
+        /*
+            Height of player, enemy, gem image is 80, width is 101
+            if ( object1.x < object2.x + object2.width  
+                && object1.x + object1.width  > object2.x 
+                && object1.y < object2.y + object2.height
+                && object1.y + object1.height > object2.y) {
+               // The objects are touching
+            }
+        */
+
         allEnemies.forEach(function(enemy) {
             if(player.x < enemy.x + 101 
                 && player.x + 101 > enemy.x 
@@ -111,6 +122,15 @@ var Engine = (function(global) {
                 player.setPosition();
             }
         });
+
+        if(player.x < gem.x + 101 
+            && player.x + 101 > gem.x 
+            && player.y < gem.y+ 80 
+            && player.y + 80 > gem.y) {
+            gem.gemCollected = true;
+            gem.collected();
+            gem = new Gems();
+        }
     }
 
     /* This function initially draws the "game level", it will then call
@@ -122,6 +142,8 @@ var Engine = (function(global) {
     function render() {
         if (playerChosen) {
             ctx.clearRect(0, 0, 1010, 606);
+            ctx.fillText("Score: " + player.score , 80, 40);
+
             /* This array holds the relative URL to the image used
              * for that particular row of the game level.
              */
@@ -180,9 +202,14 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function.
          */
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
+        if ( !gem.gemCollected) {
+            gem.render();
+        };
+        
     }
 
     /* This function does nothing but it could have been a good place to
@@ -194,7 +221,6 @@ var Engine = (function(global) {
         ctx.textAlign = 'center';
         ctx.font = "40px Arial";
         ctx.fillText("Use spacebar to change player, Enter to select", 480, 100);
-
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -222,5 +248,4 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
-    global.playerChosen = playerChosen;
 })(this);
