@@ -13,7 +13,6 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
-
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -23,10 +22,9 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime
+        lastTime,
         gameOver = false,
-        playerChosen = false,
-        score = 0;
+        playerChosen = false;
 
     canvas.width = 1010;
     canvas.height = 606;
@@ -50,7 +48,7 @@ var Engine = (function(global) {
          */
         update(dt);
         render();
-        
+
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
          */
@@ -105,8 +103,8 @@ var Engine = (function(global) {
     function checkCollisions() {
         /*
             Height of player, enemy, gem image is 80, width is 101
-            if ( object1.x < object2.x + object2.width  
-                && object1.x + object1.width  > object2.x 
+            if ( object1.x < object2.x + object2.width
+                && object1.x + object1.width  > object2.x
                 && object1.y < object2.y + object2.height
                 && object1.y + object1.height > object2.y) {
                // The objects are touching
@@ -114,19 +112,13 @@ var Engine = (function(global) {
         */
 
         allEnemies.forEach(function(enemy) {
-            if(player.x < enemy.x + 101 
-                && player.x + 101 > enemy.x 
-                && player.y < enemy.y+ 80 
-                && player.y + 80 > enemy.y) {
+            if (player.x < enemy.x + 101 && player.x + 101 > enemy.x && player.y < enemy.y + 80 && player.y + 80 > enemy.y) {
                 this.gameOver = true;
                 player.setPosition();
             }
         });
 
-        if(player.x < gem.x + 101 
-            && player.x + 101 > gem.x 
-            && player.y < gem.y+ 80 
-            && player.y + 80 > gem.y) {
+        if (player.x < gem.x + 101 && player.x + 101 > gem.x && player.y < gem.y + 80 && player.y + 80 > gem.y) {
             gem.gemCollected = true;
             gem.collected();
             gem = new Gems();
@@ -140,20 +132,20 @@ var Engine = (function(global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
-        if (playerChosen) {
+        if (this.playerChosen) {
             ctx.clearRect(0, 0, 1010, 606);
-            ctx.fillText("Score: " + player.score , 80, 40);
+            ctx.fillText("Score: " + player.score, 80, 40);
 
             /* This array holds the relative URL to the image used
              * for that particular row of the game level.
              */
             var rowImages = [
-                    'images/water-block.png',   // Top row is water
-                    'images/stone-block.png',   // Row 1 of 3 of stone
-                    'images/stone-block.png',   // Row 2 of 3 of stone
-                    'images/stone-block.png',   // Row 3 of 3 of stone
-                    'images/grass-block.png',   // Row 1 of 2 of grass
-                    'images/grass-block.png'    // Row 2 of 2 of grass
+                    'images/water-block.png', // Top row is water
+                    'images/stone-block.png', // Row 1 of 3 of stone
+                    'images/stone-block.png', // Row 2 of 3 of stone
+                    'images/stone-block.png', // Row 3 of 3 of stone
+                    'images/grass-block.png', // Row 1 of 2 of grass
+                    'images/grass-block.png' // Row 2 of 2 of grass
                 ],
                 numRows = 6,
                 numCols = 10,
@@ -181,13 +173,11 @@ var Engine = (function(global) {
                 ctx.textAlign = 'center';
                 ctx.font = 'bold 80px Arial';
                 ctx.fillText("Game Over", 480, 300);
-            };
-        }
-         
-        else {
+            }
+        } else {
             ctx.clearRect(440, 120, 1010, 606); // clear canvas to prevent overlapping while image rendering
             player.render();
-        }   
+        }
     }
 
     /* This function is called by the render function and is called on each game
@@ -195,7 +185,7 @@ var Engine = (function(global) {
      * on your enemy and player entities within app.js
      */
     function renderEntities() {
-        
+
         /*Render the player*/
         player.render();
 
@@ -206,10 +196,10 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-        if ( !gem.gemCollected) {
+        if (!gem.gemCollected) {
             gem.render();
-        };
-        
+        }
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -248,4 +238,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    global.playerChosen = playerChosen;
 })(this);
