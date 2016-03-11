@@ -134,7 +134,7 @@ var Engine = (function(global) {
     function render() {
         if (this.playerChosen) {
             ctx.clearRect(0, 0, 1010, 606);
-            ctx.fillText("Score: " + player.score, 80, 40);
+            ctx.fillText("Score: " + player.score, 85, 45);
 
             /* This array holds the relative URL to the image used
              * for that particular row of the game level.
@@ -175,7 +175,7 @@ var Engine = (function(global) {
                 ctx.fillText("Game Over", 480, 300);
             }
         } else {
-            ctx.clearRect(440, 120, 1010, 606); // clear canvas to prevent overlapping while image rendering
+            ctx.clearRect(400, 120, 1010, 606); // clear canvas to prevent overlapping while image rendering
             player.render();
         }
     }

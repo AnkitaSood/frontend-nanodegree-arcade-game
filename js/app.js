@@ -1,11 +1,15 @@
+"use strict";
 var GameObjects = function() {};
+
 //required method to draw the enemies and player on the screen
 GameObjects.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
 GameObjects.prototype.randomRange = function(upper, lower) {
     return Math.floor(Math.random() * ((upper - lower) + 1) + lower);
 };
+
 //Gemstones the Player needs to collect
 var Gems = function() {
     this.spriteGems = ['images/gem-blue.png',
@@ -17,6 +21,7 @@ var Gems = function() {
     this.setPosition();
     this.gemCollected = false;
 };
+
 Gems.prototype = Object.create(GameObjects.prototype);
 Gems.prototype.constructor = Gems;
 Gems.prototype.setPosition = function() {
@@ -24,6 +29,7 @@ Gems.prototype.setPosition = function() {
     this.x = this.randomRange(980, 1);
     this.y = this.randomRange(430, 1);
 };
+
 Gems.prototype.collected = function() {
     /*Remove the collected gem from canvas, increase score and push new enemy for every 10 points*/
     ctx.clearRect(this.x, this.y, 1010, 606);
@@ -36,6 +42,7 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
     this.setPosition();
 };
+
 Enemy.prototype = Object.create(GameObjects.prototype);
 Enemy.prototype.constructor = Enemy;
 
@@ -47,6 +54,7 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     this.x > ctx.canvas.width ? this.setPosition() : this.x += this.speed * dt;
 };
+
 Enemy.prototype.setPosition = function() {
     //set different position coordinates for the enemy everytime the game starts or it crosses the canvas
     this.x = 1;
@@ -76,26 +84,26 @@ Player.prototype = Object.create(GameObjects.prototype);
 Player.prototype.constructor = Player;
 Player.prototype.setPosition = function() {
     //intial position coordinates for the player
-    this.x = 440, this.y = 400;
+    this.x = 400, this.y = 380;
 };
 Player.prototype.handleInput = function(e) {
     /*ensure the player stays inside the canvas when the user navigates the player,
     and change player image when user hits spacebar on initial game load*/
     switch (e) {
         case "left":
-            this.x > 0 ? this.x -= 12 : this.x = 0;
+            this.x <= 0 ? this.x = 0 : this.x -= 70;
             break;
         case "right":
-            this.x < 920 ? this.x += 12 : this.x = 920;
+            this.x >= 890 ? this.x = 890 : this.x += 70;
             break;
         case "up":
             {
-                this.y > 4 ? this.y -= 12 : this.y = 2;
+                this.y <= -20 ? this.y = -20 : this.y -= 50;
             }
             break;
         case "down":
             {
-                this.y < 434 ? this.y += 12 : this.y = 434;
+                this.y >= 430 ? this.y = 430 : this.y += 50;
             }
             break;
         case "space":
